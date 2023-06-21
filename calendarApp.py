@@ -1,3 +1,5 @@
+import datetime
+
 kullanicilar = {}
 olaylar = {}
 
@@ -27,6 +29,8 @@ def kullanici_kayit():
 
     print('Kullanýcý kaydý baþarýyla oluþturuldu.')
 
+
+
 def takvimi_goruntule():
     kullanici_adi = input('Kullanýcý Adý: ')
     sifre = input('Þifre: ')
@@ -50,15 +54,23 @@ def takvimi_goruntule():
             print(f'Tip: {olay["tip"]}')
             print(f'Açýklama: {olay["aciklama"]}')
             print('---')
-        
+
         hatirlat = input('Olayý hatýrlatmak ister misiniz? (E/H): ')
         if hatirlat.upper() == 'E':
-            print('Olay hatýrlatma iþlemi yapýlacak.')  # Hatýrlatma iþlemini burada gerçekleþtirin
-        else:
-            print('Olay hatýrlatma iþlemi iptal edildi.')
-    else:
-        print('Belirtilen tarihte olay bulunmamaktadýr.')
+            hatirlatma_zamani = input('Hatýrlatma Zamaný (GG.AA.YYYY HH:MM): ')
+            hatirlatma_tarih, hatirlatma_saat = hatirlatma_zamani.split(" ")
+            hatirlatma_tarih = datetime.datetime.strptime(hatirlatma_tarih, '%d.%m.%Y')
+            hatirlatma_saat = datetime.datetime.strptime(hatirlatma_saat, '%H:%M')
 
+            simdi = datetime.datetime.now()
+
+            if hatirlatma_tarih.date() < simdi.date() or (hatirlatma_tarih.date() == simdi.date() and hatirlatma_saat.time() < simdi.time()):
+                print('Geçersiz hatýrlatma zamaný. Geçmiþ bir zaman veya þu anki zamandan önce bir zaman belirtmelisiniz.')
+            else:
+                hatirlatma_zamani = datetime.datetime.combine(hatirlatma_tarih.date(), hatirlatma_saat.time())
+                zaman_farki = hatirlatma_zamani - simdi
+                dakika_farki = zaman_farki.total_seconds() / 60
+                print(f'Olay hatýrlatmasý {dakika_farki} dakika sonra yapýlacak.') 
 
 def olay_tanimla():
     kullanici_adi = input('Kullanýcý Adý: ')
